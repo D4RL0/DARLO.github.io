@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dota 2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #444;
+            overflow: hidden;
+        }
+
+        nav a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .content {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Dota 2</h1>
+    </header>
+
+    <nav>
+        <a href="#informacion">Información</a>
+        <a href="#parches">Parches</a>
+    </nav>
+
+    <div class="content">
+        <section id="informacion">
+            <h2>Información General</h2>
+            <p>Dota 2 es un videojuego perteneciente al género de Arena de batalla en línea ARTS («estrategia de acción en tiempo real»), también conocido como MOBA, lanzado el 9 de julio del año 2013. El juego fue desarrollado por la empresa Valve Corporation. El título fue anunciado oficialmente el 13 de octubre de 2010, en un artículo en el sitio web Game Informer;​ posteriormente, entró en su etapa Beta a principios del 2011, y finalmente se lanzó al público en general a través de Steam el 9 de julio de 2013 para Microsoft Windows, y el 18 de julio de 2013 para OS X y Linux, el 17 de junio de 2015 Valve lanzó la beta del juego usando el nuevo motor gráfico Source 2 [Dota 2 Reborn], cliente que será el único y definitivo poco después del The International 2015 según el anuncio se mantuvo fiel a su predecesor, a la vez que incrementó la calidad del producto final, además de ofrecer una experiencia envolvente y gratificante para los jugadores. Sin embargo, Dota 2 es actualmente criticado por tener una dura curva de aprendizaje y una comunidad de las más hostiles en el ámbito de internet. Actualmente es el juego más jugado de Steam con más de 40.6 millones de jugadores​ únicos que se conectan casi en su totalidad con frecuencia diaria​ y ha llegado a ser incluido en el Guinness World Records Gamer's Edition.</p>
+        </section>
+
+        <section id="parches" style="display:none;">
+            <h2>Parches</h2>
+            <p>Notas del parche 7.32c
+ACTUALIZACIONES GENERALES (Parche 7.32c)
+Se corrigieron algunos creeps neutrales que lanzaban sus habilidades por la noche cuando deberían estar 
+durmiendo (Centaurs, Hellbears, Ogre Bruisers, Ancient Thunderhides)
+
+Se corrigió el brazalete oculto que no eliminaba las acumulaciones de regeneración de maná si se caía.
+Corrigieron que Centaur Warrunner’s Hitch a Ride se disipara cuando Centaur fuera desplazado verticalmente o fuera del 
+mundo. (Esto afecta cosas como Telekinesis, Flamebreak, Toss, etc.)
+
+
+Se corrigió que Dark Seer retuviera Normal Punch sin Scepter
+Se corrigió que Death Prophet pudiera volver a aplicar Spirit Syphon al mismo objetivo varias veces si se aplicaba una disipación.
+
+
+Corrigieron la interacción de Doom con el Cetro de Aghanim con Doom robado
+Se corrigió que Doom con el Cetro de Aghanim hiciera daño adicional a las unidades con alta resistencia de estado en su área.
+
+
+Se arregló la inmunidad mágica perforante del daño de la roca rodante del espíritu de la tierra
+Corrigieron que Earth Spirit Shard no proporcionara instantáneamente +4 cargas de Stone Remnant
+
+
+Se corrigió que Earth Spirit hiciera doble clic en Stone Remnant mientras rodaba colocando la piedra detrás del héroe
+Arreglado Earth Spirit Boulder Smash apuntando a cadáveres
+
+
+Se corrigió que Elder Titan no obtuviera el beneficio de Astral Spirit si se usaba en enemigos inmunes a la magia
+Se corrigió que Ember Spirit solo pudiera lanzar Fire Remnant hacia el lado derecho del mapa cuando viajaba durante la 
+activación de Activar Fire Remnant
+
+
+El daño de ataque de los esqueletos de talento de nivel 15 aumentó de +24 a +26</p>
+        </section>
+    </div>
+
+    <script>
+        // Cambia la visibilidad de las secciones al hacer clic en las pestañas
+        document.querySelectorAll('nav a').forEach(function(tab) {
+            tab.addEventListener('click', function(event) {
+                event.preventDefault();
+                
+                // Oculta todas las secciones
+                document.querySelectorAll('.content section').forEach(function(section) {
+                    section.style.display = 'none';
+                });
+
+                // Muestra la sección correspondiente a la pestaña clicada
+                var targetId = this.getAttribute('href').substring(1);
+                document.getElementById(targetId).style.display = 'block';
+            });
+        });
+    </script>
+
+</body>
+</html>
