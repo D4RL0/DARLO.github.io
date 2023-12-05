@@ -26,6 +26,16 @@
       
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        window.CrearRegistro= function(){
+            const nombre= document.getElementById("nombre").value;
+            const edad = document.getElementById("edad").value;
+
+            console.log(nombre,edad);
+
+
+        }
       </script>
             <h1>Hola Mundo</h1>
             <form id="crud form">
