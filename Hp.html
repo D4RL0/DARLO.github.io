@@ -28,9 +28,14 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        window.CrearRegistro= function(){
+        window.CrearRegistro = function(){
             const nombre= document.getElementById("nombre").value;
             const edad = document.getElementById("edad").value;
+
+            if (!nombre || !edad) {
+                console.log("Nombre y Edad son campos requeridos");
+                return;
+            }
 
             const nuevoRegistro = {
                 name: nombre,
@@ -46,7 +51,7 @@
             console.log(nombre, edad);
         }
 
-        window.BuscarRegistro= function(){
+        window.BuscarRegistro = function(){
             const idBuscar = document.getElementById("idBuscar").value;
 
             const registroRef = ref(database, 'septimo/' + idBuscar);
@@ -103,10 +108,10 @@
         <input type="text" id="idBuscar">
         <br>
         <label for="nombre">Nombre: </label>
-        <input type="text" name="" id="nombre">
+        <input type="text" name="" id="nombre" required>
         <br>
         <label for="edad">Edad: </label>
-        <input type="text" name="" id="edad">
+        <input type="text" name="" id="edad" required>
         <br>
         <button type="button" onclick="CrearRegistro()">Crear</button>
         <button type="button" onclick="BuscarRegistro()">Buscar</button>
