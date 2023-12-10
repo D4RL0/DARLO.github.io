@@ -6,6 +6,91 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdCWugXvKk8euGl8kmoqId18YfpeEHqw4",
+            authDomain: "proyecto-2-26d9e.firebaseapp.com",
+            databaseURL: "https://proyecto-2-26d9e-default-rtdb.firebaseio.com",
+            projectId: "proyecto-2-26d9e",
+            storageBucket: "proyecto-2-26d9e.appspot.com",
+            messagingSenderId: "862517468422",
+            appId: "1:862517468422:web:c6e6d6fca84867d3015287"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        window.CrearRegistro = function(){
+            const nombre = document.getElementById("nombre").value;
+            const edad = document.getElementById("edad").value;
+
+            push(
+                ref(database, 'septimo'),
+                {
+                    name: nombre,
+                    age: edad
+                }
+            );
+
+            console.log(nombre, edad);
+        }
+
+        window.EliminarRegistro = function(key){
+            remove(ref(database, 'septimo/' + key));
+        }
+
+        window.ModificarRegistro = function(key){
+            const nuevoNombre = prompt("Nuevo nombre:");
+            const nuevaEdad = prompt("Nueva edad:");
+
+            update(ref(database, 'septimo/' + key), {
+                name: nuevoNombre,
+                age: nuevaEdad
+            });
+        }
+    </script>
+
+    <h1>Hola Mundo</h1>
+    <form id="crud form">
+        <label for="nombre">Nombre: </label>
+        <input type="text" name="" id="nombre">
+        <label for="edad">Edad: </label>
+        <input type="text" name="" id="edad">
+        <button type="button" onclick="CrearRegistro()">Crear</button>
+    </form>
+
+    <ul id="registros">
+        <!-- Lista de registros -->
+    </ul>
+
+    <script>
+        // Mostrar registros existentes al cargar la página
+        onValue(ref(database, 'septimo'), (snapshot) => {
+            const registros = document.getElementById('registros');
+            registros.innerHTML = '';
+
+            snapshot.forEach((childSnapshot) => {
+                const key = childSnapshot.key;
+                const data = childSnapshot.val();
+                const listItem = document.createElement('li');
+
+                listItem.innerHTML = `
+                    ${data.name}, ${data.age}
+                    <button onclick="EliminarRegistro('${key}')">Eliminar</button>
+                    <button onclick="ModificarRegistro('${key}')">Modificar</button>
+                `;
+
+                registros.appendChild(listItem);
+            });
+        });
+    </script>
 </body>
 </html>
