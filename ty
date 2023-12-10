@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>CRUD de Matriculación de Estudiantes</h2>
+
+<!-- Formulario para matricular estudiantes -->
+<form id="formularioMatricula">
+    <label for="nombre">Nombre del Estudiante:</label>
+    <input type="text" id="nombre" required>
+    
+    <label for="curso">Curso:</label>
+    <input type="text" id="curso" required>
+    
+    <label for="fecha">Fecha de Matriculación:</label>
+    <input type="date" id="fecha" required>
+    
+    <button type="button" onclick="crearMatricula()">Crear Matrícula</button>
+    <button type="button" onclick="limpiarFormulario()">Limpiar Formulario</button>
+</form>
+<!-- Listado de matrículas -->
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre del Estudiante</th>
+            <th>Curso</th>
+            <th>Fecha de Matriculación</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody id="tablaMatriculas">
+        <!-- Aquí se mostrarán las matrículas dinámicamente -->
+    </tbody>
+</table>
+
+<!-- Formulario para editar matrícula -->
+<div id="editarMatricula" style="display: none;">
+    <h3>Editar Matrícula</h3>
+    <label for="editNombre">Nombre del Estudiante:</label>
+    <input type="text" id="editNombre" required>
+    
+    <label for="editCurso">Curso:</label>
+    <input type="text" id="editCurso" required>
+    
+    <label for="editFecha">Fecha de Matriculación:</label>
+    <input type="date" id="editFecha" required>
+    
+    <button type="button" onclick="guardarEdicion()">Guardar Edición</button>
+    <button type="button" onclick="cancelarEdicion()">Cancelar</button>
+</div>
+
+<script>
+    let matriculas = [];
+    let matriculaEditando = null;
+
+    function crearMatricula() {
+        const nombre = document.getElementById('nombre').value;
+        const curso = document.getElementById('curso').value;
+        const fecha = document.getElementById('fecha').value;
+
+        if (nombre && curso && fecha) {
+            const nuevaMatricula = {
+                id: matriculas.length + 1,
+                nombre: nombre,
+                curso: curso,
+                fecha: fecha
+            };
+
+            matriculas.push(nuevaMatricula);
+            actualizarTablaMatriculas();
+            limpiarFormulario();
+        } else {
+            alert('Por favor, complete todos los campos.');
+        }
+    }
+
+    function eliminarMatricula(id) {
+        matriculas = matriculas.filter(matricula => matricula.id !== id);
+        actualizarTablaMatriculas();
+    }
+
+    function editarMatricula(id) {
+        matriculaEditando = matriculas.find(matricula => matricula.id === id);
+        if (matriculaEditando) {
+            document.getElementById('editNombre').value = matriculaEditando.nombre;
+            document.getElementById('editCurso').value = matriculaEditando.curso;
+            document.getElementById('editFecha').value = matriculaEditando.fecha;
+
+            document.getElementById('editarMatricula').style.display = 'block';
+        }
+    }
+
+    function guardarEdicion() {
+        if (matriculaEditando) {
+            matriculaEditando.nombre = document.getElementById('editNombre').value;
+            matriculaEditando.curso = document.getElementById('editCurso').value;
+            matriculaEditando.fecha = document.getElementById('editFecha').value;
+
+            actualizarTablaMatriculas();
+            cancelarEdicion();
+        }
+    }
+
+    function cancelarEdicion() {
+        matriculaEditando = null;
+        document.getElementById('editarMatricula').style.display = 'none';
+        limpiarFormulario();
+    }
+
+    function actualizarTablaMatriculas() {
+        const tablaMatriculas = document.getElementById('tablaMatriculas');
+        tablaMatriculas.innerHTML = '';
+
+        matriculas.forEach(matricula => {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+                <td>${matricula.id}</td>
+                <td>${matricula.nombre}</td>
+                <td>${matricula.curso}</td>
+                <td>${matricula.fecha}</td>
+                <td>
+                    <button onclick="eliminarMatricula(${matricula.id})">Eliminar</button>
+                    <button onclick="editarMatricula(${matricula.id})">Editar</button>
+                </td>
+            `;
+            tablaMatriculas.appendChild(fila);
+        });
+    }
+
+    function limpiarFormulario() {
+        document.getElementById('nombre').value = '';
+        document.getElementById('curso').value = '';
+        document.getElementById('fecha').value = '';
+    }
+</script>
+
+</body>
+</html>
