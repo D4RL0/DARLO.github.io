@@ -48,26 +48,7 @@
 
             console.log(nombre,edad,curso,fecha);
         }
-        window.EliminarRegistro= function(){
-            const nombre= document.getElementById("nombre").value;
-            const edad = document.getElementById("edad").value;
-            const curso= document.getElementById("curso").value;
-            const fecha= document.getElementById("fecha").value;
-
-            push(
-                ref(database, 'septimo'),
-                {
-                    name: nombre,
-                    age: edad,
-                    couse: curso,
-                    date: fecha
-                }
-
-
-            );
-
-            console.log(nombre,edad,curso,fecha);
-        }
+        
       </script>
             <h1>Matriculacion de estudiantes</h1>
             <form id="crud form">
