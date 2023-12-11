@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCdCWugXvKk8euGl8kmoqId18YfpeEHqw4",
+          authDomain: "proyecto-2-26d9e.firebaseapp.com",
+          databaseURL: "https://proyecto-2-26d9e-default-rtdb.firebaseio.com",
+          projectId: "proyecto-2-26d9e",
+          storageBucket: "proyecto-2-26d9e.appspot.com",
+          messagingSenderId: "862517468422",
+          appId: "1:862517468422:web:c6e6d6fca84867d3015287"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        window.CrearRegistro = function(){
+            const id = document.getElementById("id").value;
+            const nombre = document.getElementById("nombre").value;
+            const curso = document.getElementById("curso").value;
+            const edad = document.getElementById("edad").value;
+            const fechaNacimiento = document.getElementById("fechaNacimiento").value;
+
+            if (!id || !nombre || !curso || !edad || !fechaNacimiento) {
+                console.log("Todos los campos son requeridos");
+                return;
+            }
+
+            const registroRef = ref(database, 'septimo/' + id);
+
+            const nuevoRegistro = {
+                id: id,
+                nombre: nombre,
+                curso: curso,
+                edad: edad,
+                fechaNacimiento: fechaNacimiento
+            };
+
+            set(registroRef, nuevoRegistro);
+
+            // Limpiar los campos
+            document.getElementById("id").value = "";
+            document.getElementById("nombre").value = "";
+            document.getElementById("curso").value = "";
+            document.getElementById("edad").value = "";
+            document.getElementById("fechaNacimiento").value = "";
+
+            console.log(nuevoRegistro);
+        }
+
+        window.BuscarRegistro = function(){
+            const idBuscar = document.getElementById("idBuscar").value;
+
+            const registroRef = ref(database, 'septimo/' + idBuscar);
+            onValue(registroRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    // Mostrar los datos encontrados
+                    document.getElementById("datosEncontrados").innerHTML = `
+                        <p>ID: ${data.id}</p>
+                        <p>Nombre: ${data.nombre}</p>
+                        <p>Curso: ${data.curso}</p>
+                        <p>Edad: ${data.edad}</p>
+                        <p>Fecha de Nacimiento: ${data.fechaNacimiento}</p>
+                    `;
+                } else {
+                    // Limpiar los campos si no se encuentra el registro
+                    document.getElementById("datosEncontrados").innerHTML = "Registro no encontrado";
+                    console.log("Registro no encontrado");
+                }
+            });
+        }
+
+        window.ModificarRegistro = function(){
+            const idModificar = document.getElementById("id").value;
+            const nombre = document.getElementById("nombre").value;
+            const curso = document.getElementById("curso").value;
+            const edad = document.getElementById("edad").value;
+            const fechaNacimiento = document.getElementById("fechaNacimiento").value;
+
+            const registroRef = ref(database, 'septimo/' + idModificar);
+            set(registroRef, {
+                id: idModificar,
+                nombre: nombre,
+                curso: curso,
+                edad: edad,
+                fechaNacimiento: fechaNacimiento
+            });
+
+            // Limpiar los campos
+            document.getElementById("id").value = "";
+            document.getElementById("nombre").value = "";
+            document.getElementById("curso").value = "";
+            document.getElementById("edad").value = "";
+            document.getElementById("fechaNacimiento").value = "";
+
+            console.log("Registro modificado");
+        }
+
+        window.EliminarRegistro = function(){
+            const idEliminar = document.getElementById("id").value;
+            const registroRef = ref(database, 'septimo/' + idEliminar);
+            remove(registroRef);
+
+            // Limpiar los campos
+            document.getElementById("id").
