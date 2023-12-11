@@ -59,6 +59,72 @@
 
             console.log(nuevoRegistro);
         }
+
+        window.BuscarRegistro = function(){
+            const idBuscar = document.getElementById("idBuscar").value;
+
+            const registroRef = ref(database, 'septimo/' + idBuscar);
+            onValue(registroRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    // Mostrar los datos encontrados
+                    document.getElementById("id").value = data.id;
+                    document.getElementById("nombre").value = data.nombre;
+                    document.getElementById("curso").value = data.curso;
+                    document.getElementById("edad").value = data.edad;
+                    document.getElementById("fechaNacimiento").value = data.fechaNacimiento;
+                } else {
+                    // Limpiar los campos si no se encuentra el registro
+                    document.getElementById("id").value = "";
+                    document.getElementById("nombre").value = "";
+                    document.getElementById("curso").value = "";
+                    document.getElementById("edad").value = "";
+                    document.getElementById("fechaNacimiento").value = "";
+                    console.log("Registro no encontrado");
+                }
+            });
+        }
+
+        window.ModificarRegistro = function(){
+            const idModificar = document.getElementById("id").value;
+            const nombre = document.getElementById("nombre").value;
+            const curso = document.getElementById("curso").value;
+            const edad = document.getElementById("edad").value;
+            const fechaNacimiento = document.getElementById("fechaNacimiento").value;
+
+            const registroRef = ref(database, 'septimo/' + idModificar);
+            set(registroRef, {
+                id: idModificar,
+                nombre: nombre,
+                curso: curso,
+                edad: edad,
+                fechaNacimiento: fechaNacimiento
+            });
+
+            // Limpiar los campos
+            document.getElementById("id").value = "";
+            document.getElementById("nombre").value = "";
+            document.getElementById("curso").value = "";
+            document.getElementById("edad").value = "";
+            document.getElementById("fechaNacimiento").value = "";
+
+            console.log("Registro modificado");
+        }
+
+        window.EliminarRegistro = function(){
+            const idEliminar = document.getElementById("id").value;
+            const registroRef = ref(database, 'septimo/' + idEliminar);
+            remove(registroRef);
+
+            // Limpiar los campos
+            document.getElementById("id").value = "";
+            document.getElementById("nombre").value = "";
+            document.getElementById("curso").value = "";
+            document.getElementById("edad").value = "";
+            document.getElementById("fechaNacimiento").value = "";
+
+            console.log("Registro eliminado");
+        }
     </script>
     <h1>Hola Mundo</h1>
     <form id="crud form">
@@ -78,6 +144,9 @@
         <input type="text" id="fechaNacimiento" required>
         <br>
         <button type="button" onclick="CrearRegistro()">Guardar</button>
+        <button type="button" onclick="BuscarRegistro()">Buscar</button>
+        <button type="button" onclick="ModificarRegistro()">Modificar</button>
+        <button type="button" onclick="EliminarRegistro()">Eliminar</button>
     </form>
 </body>
 </html>
