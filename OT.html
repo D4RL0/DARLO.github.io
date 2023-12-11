@@ -58,13 +58,33 @@
             row.insertCell(2).innerHTML = curso;
             row.insertCell(3).innerHTML = edad;
             row.insertCell(4).innerHTML = fechaMatricula;
+
+            // Limpiar los campos después de agregar a la tabla
+            document.getElementById("id").value = "";
+            document.getElementById("nombre").value = "";
+            document.getElementById("curso").value = "";
+            document.getElementById("edad").value = "";
+            document.getElementById("fechaMatricula").value = "";
         }
     </script>
 
     <h1>Registro de Estudiantes</h1>
     <form id="crudForm">
-        <!-- ... (tu código existente) -->
-
+        <label for="id">ID: </label>
+        <input type="text" id="id" required>
+        <br>
+        <label for="nombre">Nombre: </label>
+        <input type="text" id="nombre" required>
+        <br>
+        <label for="curso">Curso: </label>
+        <input type="text" id="curso" required>
+        <br>
+        <label for="edad">Edad: </label>
+        <input type="text" id="edad" required>
+        <br>
+        <label for="fechaMatricula">Fecha de Matricula: </label>
+        <input type="text" id="fechaMatricula" required>
+        <br>
         <button type="button" onclick="CrearRegistro()">Guardar</button>
         <button type="button" onclick="ModificarRegistro()">Modificar</button>
         <button type="button" onclick="EliminarRegistro()">Eliminar</button>
