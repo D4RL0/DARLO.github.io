@@ -9,7 +9,7 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-        import  { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"
+        import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"
       
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -26,62 +26,58 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        window.CrearRegistro = function() {
+        window.CrearRegistro = function(){
+            const id = document.getElementById("id").value;
             const nombre = document.getElementById("nombre").value;
+            const curso = document.getElementById("curso").value;
             const edad = document.getElementById("edad").value;
+            const fechaNacimiento = document.getElementById("fechaNacimiento").value;
 
-            push(
-                ref(database, 'septimo'),
-                {
-                    name: nombre,
-                    age: edad
-                }
-            );
+            if (!id || !nombre || !curso || !edad || !fechaNacimiento) {
+                console.log("Todos los campos son requeridos");
+                return;
+            }
 
-            console.log(nombre, edad);
+            const registroRef = ref(database, 'septimo/' + id);
+
+            const nuevoRegistro = {
+                id: id,
+                nombre: nombre,
+                curso: curso,
+                edad: edad,
+                fechaNacimiento: fechaNacimiento
+            };
+
+            set(registroRef, nuevoRegistro);
+
+            // Limpiar los campos
+            document.getElementById("id").value = "";
+            document.getElementById("nombre").value = "";
+            document.getElementById("curso").value = "";
+            document.getElementById("edad").value = "";
+            document.getElementById("fechaNacimiento").value = "";
+
+            console.log(nuevoRegistro);
         }
-
-        window.ModificarRegistro = function() {
-            const idModificar = document.getElementById("idModificar").value;
-            const nuevoNombre = document.getElementById("nuevoNombre").value;
-            const nuevaEdad = document.getElementById("nuevaEdad").value;
-
-            set(ref(database, `septimo/${idModificar}`), {
-                name: nuevoNombre,
-                age: nuevaEdad
-            });
-
-            console.log("Registro modificado:", idModificar, nuevoNombre, nuevaEdad);
-        }
-
-        window.EliminarRegistro = function() {
-            const idEliminar = document.getElementById("idEliminar").value;
-
-            remove(ref(database, `septimo/${idEliminar}`));
-
-            console.log("Registro eliminado:", idEliminar);
-        }
-      </script>
-
+    </script>
     <h1>Hola Mundo</h1>
     <form id="crud form">
+        <label for="id">ID: </label>
+        <input type="text" id="id" required>
+        <br>
         <label for="nombre">Nombre: </label>
-        <input type="text" name="" id="nombre">
+        <input type="text" id="nombre" required>
+        <br>
+        <label for="curso">Curso: </label>
+        <input type="text" id="curso" required>
+        <br>
         <label for="edad">Edad: </label>
-        <input type="text" name="" id="edad">
-        <button type="button" onclick="CrearRegistro()">Crear</button>
-
-        <label for="idModificar">ID a Modificar: </label>
-        <input type="text" name="" id="idModificar">
-        <label for="nuevoNombre">Nuevo Nombre: </label>
-        <input type="text" name="" id="nuevoNombre">
-        <label for="nuevaEdad">Nueva Edad: </label>
-        <input type="text" name="" id="nuevaEdad">
-        <button type="button" onclick="ModificarRegistro()">Modificar</button>
-
-        <label for="idEliminar">ID a Eliminar: </label>
-        <input type="text" name="" id="idEliminar">
-        <button type="button" onclick="EliminarRegistro()">Eliminar</button>
+        <input type="text" id="edad" required>
+        <br>
+        <label for="fechaNacimiento">Fecha de Nacimiento: </label>
+        <input type="text" id="fechaNacimiento" required>
+        <br>
+        <button type="button" onclick="CrearRegistro()">Guardar</button>
     </form>
 </body>
 </html>
