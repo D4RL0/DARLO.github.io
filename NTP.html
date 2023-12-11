@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Estudiantes</title>
 </head>
+
 <body>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"
-      
+
         const firebaseConfig = {
             apiKey: "AIzaSyCdCWugXvKk8euGl8kmoqId18YfpeEHqw4",
             authDomain: "proyecto-2-26d9e.firebaseapp.com",
@@ -19,29 +21,66 @@
             messagingSenderId: "862517468422",
             appId: "1:862517468422:web:c6e6d6fca84867d3015287"
         };
-      
+
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        window.CrearRegistro = function(){
+        window.CrearRegistro = function () {
             // ... (tu código existente)
 
             // Añadir a la tabla
             actualizarTabla();
         }
 
-        window.ModificarRegistro = function(){
+        window.ModificarRegistro = function () {
             // ... (tu código existente)
 
             // Añadir a la tabla
             actualizarTabla();
         }
 
-        window.EliminarRegistro = function(){
-            // ... (tu código existente)
+        window.EliminarRegistro = function () {
+            const id = document.getElementById("id").value;
 
-            // Añadir a la tabla
-            actualizarTabla();
+            // Verificar si el ID está presente antes de intentar eliminar
+            if (id.trim() !== "") {
+                // Obtener una referencia al nodo específico en la base de datos
+                const registroRef = ref(database, 'registros/' + id);
+
+                // Eliminar el registro de la base de datos
+                remove(registroRef)
+                    .then(() => {
+                        // Eliminar la fila de la tabla por ID
+                        eliminarFilaTabla(id);
+                    })
+                    .catch((error) => {
+                        console.error("Error al eliminar el registro: ", error);
+                    });
+            }
+            // Limpiar los campos después de eliminar
+            limpiarCampos();
+        }
+
+        function eliminarFilaTabla(id) {
+            // Obtener la referencia de la tabla
+            const tabla = document.getElementById("tablaRegistros");
+
+            // Buscar la fila por el ID y eliminarla
+            for (let i = 1; i < tabla.rows.length; i++) {
+                if (tabla.rows[i].cells[0].innerHTML === id) {
+                    tabla.deleteRow(i);
+                    break;
+                }
+            }
+        }
+
+        function limpiarCampos() {
+            // Limpiar los campos después de eliminar
+            document.getElementById("id").value = "";
+            document.getElementById("nombre").value = "";
+            document.getElementById("curso").value = "";
+            document.getElementById("edad").value = "";
+            document.getElementById("fechaMatricula").value = "";
         }
 
         function actualizarTabla() {
@@ -65,17 +104,6 @@
             document.getElementById("curso").value = "";
             document.getElementById("edad").value = "";
             document.getElementById("fechaMatricula").value = "";
-        }
-
-        function llenarCamposDesdeTabla(index) {
-            const tabla = document.getElementById("tablaRegistros");
-            const fila = tabla.rows[index];
-            
-            document.getElementById("id").value = fila.cells[0].innerHTML;
-            document.getElementById("nombre").value = fila.cells[1].innerHTML;
-            document.getElementById("curso").value = fila.cells[2].innerHTML;
-            document.getElementById("edad").value = fila.cells[3].innerHTML;
-            document.getElementById("fechaMatricula").value = fila.cells[4].innerHTML;
         }
     </script>
 
@@ -102,7 +130,7 @@
     </form>
 
     <h2>Registros Guardados</h2>
-    <table id="tablaRegistros" border="1" onclick="seleccionarFila(event)">
+    <table id="tablaRegistros" border="1">
         <tr>
             <th>ID</th>
             <th>Nombre</th>
@@ -112,14 +140,6 @@
         </tr>
         <!-- Las filas de la tabla se añadirán dinámicamente -->
     </table>
-
-    <script>
-        function seleccionarFila(event) {
-            const fila = event.target.parentNode;
-            const index = fila.rowIndex;
-            llenarCamposDesdeTabla(index);
-        }
-    </script>
 </body>
+
 </html>
- 
