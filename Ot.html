@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Estudiantes</title>
+</head>
+<body>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"
+      
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdCWugXvKk8euGl8kmoqId18YfpeEHqw4",
+            authDomain: "proyecto-2-26d9e.firebaseapp.com",
+            databaseURL: "https://proyecto-2-26d9e-default-rtdb.firebaseio.com",
+            projectId: "proyecto-2-26d9e",
+            storageBucket: "proyecto-2-26d9e.appspot.com",
+            messagingSenderId: "862517468422",
+            appId: "1:862517468422:web:c6e6d6fca84867d3015287"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        window.CrearRegistro = function(){
+            // ... (tu código existente)
+
+            // Añadir a la tabla
+            actualizarTabla();
+        }
+
+        window.ModificarRegistro = function(){
+            // ... (tu código existente)
+
+            // Añadir a la tabla
+            actualizarTabla();
+        }
+
+        window.EliminarRegistro = function(){
+            // ... (tu código existente)
+
+            // Añadir a la tabla
+            actualizarTabla();
+        }
+
+        function actualizarTabla() {
+            const tabla = document.getElementById("tablaRegistros");
+            const id = document.getElementById("id").value;
+            const nombre = document.getElementById("nombre").value;
+            const curso = document.getElementById("curso").value;
+            const edad = document.getElementById("edad").value;
+            const fechaMatricula = document.getElementById("fechaMatricula").value;
+
+            const row = tabla.insertRow();
+            row.insertCell(0).innerHTML = id;
+            row.insertCell(1).innerHTML = nombre;
+            row.insertCell(2).innerHTML = curso;
+            row.insertCell(3).innerHTML = edad;
+            row.insertCell(4).innerHTML = fechaMatricula;
+        }
+    </script>
+
+    <h1>Registro de Estudiantes</h1>
+    <form id="crudForm">
+        <!-- ... (tu código existente) -->
+
+        <button type="button" onclick="CrearRegistro()">Guardar</button>
+        <button type="button" onclick="ModificarRegistro()">Modificar</button>
+        <button type="button" onclick="EliminarRegistro()">Eliminar</button>
+    </form>
+
+    <h2>Registros Guardados</h2>
+    <table id="tablaRegistros" border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Curso</th>
+            <th>Edad</th>
+            <th>Fecha de Matricula</th>
+        </tr>
+        <!-- Las filas de la tabla se añadirán dinámicamente -->
+    </table>
+</body>
+</html>
