@@ -89,37 +89,8 @@
         window.EliminarRegistro = function (key) {
             remove(ref(database, 'registros/' + key));
         }
-    </script>
 
-    <h1>CRUD App</h1>
-    <form id="crud-form">
-        <label for="id">ID:</label>
-        <input type="text" id="id" name="id">
-        <label for="apellido">Apellido:</label>
-        <input type="text" id="apellido" name="apellido">
-        <label for="curso">Curso:</label>
-        <input type="text" id="curso" name="curso">
-        <label for="fechaMatricula">Fecha de matrícula:</label>
-        <input type="text" id="fechaMatricula" name="fechaMatricula">
-        <button type="button" onclick="CrearRegistro()">Crear</button>
-        <button type="button" onclick="BuscarRegistro()">Buscar</button>
-    </form>
-
-    <h2>Registros</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Apellido</th>
-                <th>Curso</th>
-                <th>Fecha de matrícula</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-    </table>
-
-    <script type="module">
+        // Update the table when data changes
         onValue(ref(database, 'registros'), (snapshot) => {
             const data = snapshot.val();
             const records = data ? Object.entries(data) : [];
@@ -169,6 +140,34 @@
             });
         });
     </script>
+
+    <h1>CRUD App</h1>
+    <form id="crud-form">
+        <label for="id">ID:</label>
+        <input type="text" id="id" name="id">
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" name="apellido">
+        <label for="curso">Curso:</label>
+        <input type="text" id="curso" name="curso">
+        <label for="fechaMatricula">Fecha de matrícula:</label>
+        <input type="text" id="fechaMatricula" name="fechaMatricula">
+        <button type="button" onclick="CrearRegistro()">Crear</button>
+        <button type="button" onclick="BuscarRegistro()">Buscar</button>
+    </form>
+
+    <h2>Registros</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Apellido</th>
+                <th>Curso</th>
+                <th>Fecha de matrícula</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
 </body>
 
 </html>
