@@ -28,9 +28,6 @@
 
 <!-- Formulario de Registro -->
 <form id="registroForm">
-    <label for="id">ID:</label>
-    <input type="text" id="id" required>
-    
     <label for="nombre">Nombre:</label>
     <input type="text" id="nombre" required>
     
@@ -95,7 +92,6 @@
 
     function agregarEstudiante() {
         // Obtener valores del formulario
-        let id = document.getElementById('id').value;
         let nombre = document.getElementById('nombre').value;
         let apellido = document.getElementById('apellido').value;
         let edad = document.getElementById('edad').value;
@@ -110,11 +106,10 @@
 
         // Push a la base de datos
         const nuevoEstudianteRef = push(estudiantesRef);
-        const nuevoEstudianteKey = nuevoEstudianteRef.key;
 
         // Crear objeto estudiante
         let estudiante = {
-            id: nuevoEstudianteKey,
+            id: nuevoEstudianteRef.key,
             nombre: nombre,
             apellido: apellido,
             edad: edad,
@@ -123,13 +118,10 @@
         };
 
         // Actualizar datos en la base de datos
-        estudiantesRef.child(nuevoEstudianteKey).set(estudiante);
+        nuevoEstudianteRef.set(estudiante);
 
         // Limpiar formulario
         document.getElementById('registroForm').reset();
-
-        // Actualizar tabla
-        actualizarTabla();
     }
 
     function buscarEstudiante() {
@@ -195,9 +187,6 @@
 
         // Eliminar estudiante de la base de datos
         remove(ref(estudiantesRef, id));
-
-        // Actualizar tabla sin el estudiante eliminado
-        actualizarTabla();
     }
 </script>
 
