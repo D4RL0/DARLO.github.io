@@ -1,102 +1,95 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Estudiantes</title>
-  <!-- Import Firebase SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+<!-- ... (código anterior) ... -->
 
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCdCWugXvKk8euGl8kmoqId18YfpeEHqw4",
-      authDomain: "proyecto-2-26d9e.firebaseapp.com",
-      databaseURL: "https://proyecto-2-26d9e-default-rtdb.firebaseio.com",
-      projectId: "proyecto-2-26d9e",
-      storageBucket: "proyecto-2-26d9e.appspot.com",
-      messagingSenderId: "862517468422",
-      appId: "1:862517468422:web:c6e6d6fca84867d3015287"
-    };
+<script type="module">
+  // Referencia a la tabla HTML donde se mostrarán los estudiantes
+  const studentTable = document.getElementById('studentTable');
 
-    // Initialize Firebase
-    initializeApp(firebaseConfig);
+  // Función para buscar un estudiante por ID
+  function buscarPorId() {
+    const searchId = document.getElementById('searchId').value;
+    const database = getDatabase();
+    const studentsRef = ref(database, 'students');
 
-    // Your code for student registration and management goes here
-  </script>
-</head>
-<body>
-  <h1>Registro de Estudiantes</h1>
+    // Escuchar cambios en la base de datos cuando se agrega un nuevo estudiante
+    onValue(studentsRef, (snapshot) => {
+      const students = snapshot.val();
 
-  <!-- Formulario de Registro -->
-  <form id="studentForm">
-    <label for="id">ID:</label>
-    <input type="text" id="id" name="id" required>
+      // Limpiar la tabla antes de mostrar los resultados
+      studentTable.innerHTML = '';
 
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="nombre" name="nombre" required>
+      // Verificar si el estudiante con el ID proporcionado existe
+      if (students) {
+        const student = students[searchId];
 
-    <label for="apellido">Apellido:</label>
-    <input type="text" id="apellido" name="apellido" required>
+        if (student) {
+          // Mostrar la información del estudiante en el formulario
+          document.getElementById('id').value = student.id;
+          document.getElementById('nombre').value = student.nombre;
+          document.getElementById('apellido').value = student.apellido;
+          document.getElementById('edad').value = student.edad;
+          document.getElementById('curso').value = student.curso;
+          document.getElementById('fecha').value = student.fecha;
 
-    <label for="edad">Edad:</label>
-    <input type="number" id="edad" name="edad" required>
+          // Crear fila en la tabla con los detalles del estudiante
+          const row = studentTable.insertRow();
+          row.innerHTML = `<td>${student.id}</td>
+                           <td>${student.nombre}</td>
+                           <td>${student.apellido}</td>
+                           <td>${student.edad}</td>
+                           <td>${student.curso}</td>
+                           <td>${student.fecha}</td>
+                           <td>
+                             <button type="button" onclick="modificarEstudiante('${searchId}')">Modificar</button>
+                             <button type="button" onclick="eliminarEstudiante('${searchId}')">Eliminar</button>
+                           </td>`;
+        } else {
+          alert('Estudiante no encontrado');
+        }
+      }
+    });
+  }
 
-    <label for="curso">Curso:</label>
-    <input type="text" id="curso" name="curso" required>
+  // Función para modificar un estudiante
+  function modificarEstudiante(studentId) {
+    // Obtener referencias a los campos del formulario
+    const id = document.getElementById('id').value;
+    const nombre = document.getElementById('nombre').value;
+    const apellido = document.getElementById('apellido').value;
+    const edad = document.getElementById('edad').value;
+    const curso = document.getElementById('curso').value;
+    const fecha = document.getElementById('fecha').value;
 
-    <label for="fecha">Fecha de Matriculación:</label>
-    <input type="date" id="fecha" name="fecha" required>
+    // Obtener referencia a la base de datos de Firebase
+    const database = getDatabase();
+    const studentsRef = ref(database, 'students');
 
-    <button type="button" onclick="registrarEstudiante()">Registrar</button>
-  </form>
+    // Actualizar la información del estudiante en la base de datos
+    set(ref(studentsRef, studentId), {
+      id,
+      nombre,
+      apellido,
+      edad,
+      curso,
+      fecha
+    });
 
-  <!-- Tabla de Estudiantes -->
-  <h2>Lista de Estudiantes</h2>
-  <table id="studentTable">
-    <!-- La tabla se llenará dinámicamente con los datos de Firebase -->
-  </table>
+    // Limpiar el formulario después de modificar
+    document.getElementById('studentForm').reset();
+    // Limpiar la tabla después de modificar
+    studentTable.innerHTML = '';
+  }
 
-  <!-- Buscar por ID -->
-  <label for="searchId">Buscar por ID:</label>
-  <input type="text" id="searchId" name="searchId">
-  <button type="button" onclick="buscarPorId()">Buscar</button>
+  // Función para eliminar un estudiante
+  function eliminarEstudiante(studentId) {
+    const database = getDatabase();
+    const studentsRef = ref(database, 'students');
 
-  <script type="module">
-    // Función para registrar un estudiante
-    function registrarEstudiante() {
-      // Obtener referencias a los campos del formulario
-      const id = document.getElementById('id').value;
-      const nombre = document.getElementById('nombre').value;
-      const apellido = document.getElementById('apellido').value;
-      const edad = document.getElementById('edad').value;
-      const curso = document.getElementById('curso').value;
-      const fecha = document.getElementById('fecha').value;
+    // Eliminar el estudiante de la base de datos
+    remove(ref(studentsRef, studentId));
 
-      // Obtener referencia a la base de datos de Firebase
-      const database = getDatabase();
-
-      // Crear un nuevo registro en la base de datos
-      const newStudentRef = push(ref(database, 'students'), {
-        id,
-        nombre,
-        apellido,
-        edad,
-        curso,
-        fecha
-      });
-
-      // Limpiar el formulario después de registrar
-      document.getElementById('studentForm').reset();
-    }
-
-    // Función para buscar un estudiante por ID
-    function buscarPorId() {
-      const searchId = document.getElementById('searchId').value;
-
-      // TODO: Implementar lógica para buscar por ID y mostrar en la tabla
-    }
-  </script>
-</body>
-</html>
+    // Limpiar el formulario después de eliminar
+    document.getElementById('studentForm').reset();
+    // Limpiar la tabla después de eliminar
+    studentTable.innerHTML = '';
+  }
+</script>
