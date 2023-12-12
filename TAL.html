@@ -75,46 +75,19 @@
             });
         }
 
-        window.ModificarRegistro = function () {
-            const idToUpdate = document.getElementById("id").value;
+        window.ModificarRegistro = function (key) {
+            const updatedData = {
+                id: document.getElementById("id").value,
+                apellido: document.getElementById("apellido").value,
+                curso: document.getElementById("curso").value,
+                fechaMatricula: document.getElementById("fechaMatricula").value
+            };
 
-            onValue(ref(database, 'registros'), (snapshot) => {
-                const data = snapshot.val();
-                const records = data ? Object.entries(data) : [];
-
-                const recordToUpdate = records.find(([key, record]) => record.id === idToUpdate);
-
-                if (recordToUpdate) {
-                    const updatedData = {
-                        id: idToUpdate,
-                        apellido: document.getElementById("apellido").value,
-                        curso: document.getElementById("curso").value,
-                        fechaMatricula: document.getElementById("fechaMatricula").value
-                    };
-
-                    update(ref(database, 'registros/' + recordToUpdate[0]), updatedData);
-                } else {
-                    alert("Registro no encontrado");
-                }
-            });
+            update(ref(database, 'registros/' + key), updatedData);
         }
 
-        window.EliminarRegistro = function () {
-            const idToDelete = document.getElementById("id").value;
-
-            onValue(ref(database, 'registros'), (snapshot) => {
-                const data = snapshot.val();
-                const records = data ? Object.entries(data) : [];
-
-                const recordToDelete = records.find(([key, record]) => record.id === idToDelete);
-
-                if (recordToDelete) {
-                    remove(ref(database, 'registros/' + recordToDelete[0]));
-                    document.getElementById("crud-form").reset();
-                } else {
-                    alert("Registro no encontrado");
-                }
-            });
+        window.EliminarRegistro = function (key) {
+            remove(ref(database, 'registros/' + key));
         }
     </script>
 
@@ -130,8 +103,6 @@
         <input type="text" id="fechaMatricula" name="fechaMatricula">
         <button type="button" onclick="CrearRegistro()">Crear</button>
         <button type="button" onclick="BuscarRegistro()">Buscar</button>
-        <button type="button" onclick="ModificarRegistro()">Modificar</button>
-        <button type="button" onclick="EliminarRegistro()">Eliminar</button>
     </form>
 
     <h2>Registros</h2>
@@ -176,6 +147,7 @@
                 row.appendChild(fechaMatriculaCell);
 
                 const actionsCell = document.createElement("td");
+
                 const modificarButton = document.createElement("button");
                 modificarButton.textContent = "Modificar";
                 modificarButton.onclick = () => {
@@ -188,9 +160,7 @@
 
                 const eliminarButton = document.createElement("button");
                 eliminarButton.textContent = "Eliminar";
-                eliminarButton.onclick = () => {
-                    remove(ref(database, 'registros/' + key));
-                };
+                eliminarButton.onclick = () => EliminarRegistro(key);
                 actionsCell.appendChild(eliminarButton);
 
                 row.appendChild(actionsCell);
