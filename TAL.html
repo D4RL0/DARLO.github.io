@@ -1,123 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Estudiantes</title>
+    <title>CRUD App</title>
 </head>
+
 <body>
     <script type="module">
+        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
 
+        // Your web app's Firebase configuration
         const firebaseConfig = {
-          apiKey: "AIzaSyCdCWugXvKk8euGl8kmoqId18YfpeEHqw4",
-          authDomain: "proyecto-2-26d9e.firebaseapp.com",
-          databaseURL: "https://proyecto-2-26d9e-default-rtdb.firebaseio.com",
-          projectId: "proyecto-2-26d9e",
-          storageBucket: "proyecto-2-26d9e.appspot.com",
-          messagingSenderId: "862517468422",
-          appId: "1:862517468422:web:c6e6d6fca84867d3015287"
+            apiKey: "AIzaSyCdCWugXvKk8euGl8kmoqId18YfpeEHqw4",
+            authDomain: "proyecto-2-26d9e.firebaseapp.com",
+            databaseURL: "https://proyecto-2-26d9e-default-rtdb.firebaseio.com",
+            projectId: "proyecto-2-26d9e",
+            storageBucket: "proyecto-2-26d9e.appspot.com",
+            messagingSenderId: "862517468422",
+            appId: "1:862517468422:web:c6e6d6fca84867d3015287"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        // Función para crear un nuevo registro
-        window.CrearRegistro = function(){
+        window.CrearRegistro = function () {
             const id = document.getElementById("id").value;
-            const nombre = document.getElementById("nombre").value;
             const apellido = document.getElementById("apellido").value;
-            const edad = document.getElementById("edad").value;
             const curso = document.getElementById("curso").value;
-            const fechaMatriculacion = document.getElementById("fechaMatriculacion").value;
+            const fechaMatricula = document.getElementById("fechaMatricula").value;
+
+            const newData = {
+                id: id,
+                apellido: apellido,
+                curso: curso,
+                fechaMatricula: fechaMatricula
+            };
 
             push(
-                ref(database, 'estudiantes'),
-                {
-                    id: id,
-                    nombre: nombre,
-                    apellido: apellido,
-                    edad: edad,
-                    curso: curso,
-                    fechaMatriculacion: fechaMatriculacion
-                }
+                ref(database, 'registros'),
+                newData
             );
 
-            // Limpiar los campos después de crear el registro
-            document.getElementById("id").value = "";
-            document.getElementById("nombre").value = "";
-            document.getElementById("apellido").value = "";
-            document.getElementById("edad").value = "";
-            document.getElementById("curso").value = "";
-            document.getElementById("fechaMatriculacion").value = "";
+            // Clear the form after pushing data
+            document.getElementById("crud-form").reset();
         }
 
-        // Función para mostrar todos los registros
-        function mostrarRegistros() {
-            const registrosDiv = document.getElementById("registros");
-            registrosDiv.innerHTML = ""; // Limpiar contenido existente
+        window.BuscarRegistro = function () {
+            const idToSearch = document.getElementById("idBuscar").value;
 
-            onValue(ref(database, 'estudiantes'), (snapshot) => {
-                const estudiantes = snapshot.val();
-                for (const key in estudiantes) {
-                    const estudiante = estudiantes[key];
-                    const row = `<tr>
-                        <td>${estudiante.id}</td>
-                        <td>${estudiante.nombre}</td>
-                        <td>${estudiante.apellido}</td>
-                        <td>${estudiante.edad}</td>
-                        <td>${estudiante.curso}</td>
-                        <td>${estudiante.fechaMatriculacion}</td>
-                        <td><button onclick="modificarRegistro('${key}', ${estudiante.id})">Modificar</button></td>
-                        <td><button onclick="eliminarRegistro('${key}')">Eliminar</button></td>
-                    </tr>`;
-                    registrosDiv.innerHTML += row;
+            onValue(ref(database, 'registros'), (snapshot) => {
+                const data = snapshot.val();
+                const records = data ? Object.entries(data) : [];
+
+                const recordToDisplay = records.find(([key, record]) => record.id === idToSearch);
+
+                if (recordToDisplay) {
+                    // Fill the form with the found record's data
+                    document.getElementById("id").value = recordToDisplay[1].id;
+                    document.getElementById("apellido").value = recordToDisplay[1].apellido;
+                    document.getElementById("curso").value = recordToDisplay[1].curso;
+                    document.getElementById("fechaMatricula").value = recordToDisplay[1].fechaMatricula;
+                } else {
+                    // Clear the form if the record is not found
+                    document.getElementById("crud-form").reset();
+                    alert("Registro no encontrado");
                 }
             });
         }
 
-        // Función para modificar un registro
-        window.modificarRegistro = function(key, id) {
-            // Llenar los campos con la información del registro seleccionado
-            document.getElementById("id").value = id;
-            // Puedes hacer lo mismo para los demás campos (nombre, apellido, edad, curso, fechaMatriculacion)
+        window.ModificarRegistro = function () {
+            const idToUpdate = document.getElementById("id").value;
 
-            // Implementa la lógica para modificar un registro según la clave (key)
-            // Puedes utilizar un formulario o una ventana modal para la edición
-            // ...
+            onValue(ref(database, 'registros'), (snapshot) => {
+                const data = snapshot.val();
+                const records = data ? Object.entries(data) : [];
 
-            // Ejemplo de cómo actualizar un campo específico (puedes ajustar según tus necesidades)
-            update(ref(database, `estudiantes/${key}`), {
-                nombre: "NuevoNombre",
-                edad: 25
+                const recordToUpdate = records.find(([key, record]) => record.id === idToUpdate);
+
+                if (recordToUpdate) {
+                    const updatedData = {
+                        id: idToUpdate,
+                        apellido: document.getElementById("apellido").value,
+                        curso: document.getElementById("curso").value,
+                        fechaMatricula: document.getElementById("fechaMatricula").value
+                    };
+
+                    update(ref(database, 'registros/' + recordToUpdate[0]), updatedData);
+                } else {
+                    alert("Registro no encontrado");
+                }
             });
         }
 
-        // Función para eliminar un registro
-        window.eliminarRegistro = function(key) {
-            remove(ref(database, `estudiantes/${key}`));
-        }
+        window.EliminarRegistro = function () {
+            const idToDelete = document.getElementById("id").value;
 
-        // Mostrar los registros al cargar la página
-        mostrarRegistros();
+            onValue(ref(database, 'registros'), (snapshot) => {
+                const data = snapshot.val();
+                const records = data ? Object.entries(data) : [];
+
+                const recordToDelete = records.find(([key, record]) => record.id === idToDelete);
+
+                if (recordToDelete) {
+                    remove(ref(database, 'registros/' + recordToDelete[0]));
+                    document.getElementById("crud-form").reset();
+                } else {
+                    alert("Registro no encontrado");
+                }
+            });
+        }
     </script>
 
-    <h1>Registro de Estudiantes</h1>
+    <h1>CRUD App</h1>
     <form id="crud-form">
-        <label for="id">ID: </label>
-        <input type="text" name="" id="id">
-        <label for="nombre">Nombre: </label>
-        <input type="text" name="" id="nombre">
-        <label for="apellido">Apellido: </label>
-        <input type="text" name="" id="apellido">
-        <label for="edad">Edad: </label>
-        <input type="text" name="" id="edad">
-        <label for="curso">Curso: </label>
-        <input type="text" name="" id="curso">
-        <label for="fechaMatriculacion">Fecha de Matriculación: </label>
-        <input type="text" name="" id="fechaMatriculacion">
+        <label for="id">ID:</label>
+        <input type="text" id="id" name="id">
+        <label for="apellido">Apellido:</label>
+        <input type="text" id="apellido" name="apellido">
+        <label for="curso">Curso:</label>
+        <input type="text" id="curso" name="curso">
+        <label for="fechaMatricula">Fecha de matrícula:</label>
+        <input type="text" id="fechaMatricula" name="fechaMatricula">
         <button type="button" onclick="CrearRegistro()">Crear</button>
+        <button type="button" onclick="BuscarRegistro()">Buscar</button>
+        <button type="button" onclick="ModificarRegistro()">Modificar</button>
+        <button type="button" onclick="EliminarRegistro()">Eliminar</button>
     </form>
 
     <h2>Registros</h2>
@@ -125,18 +139,66 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Nombre</th>
                 <th>Apellido</th>
-                <th>Edad</th>
                 <th>Curso</th>
-                <th>Fecha de Matriculación</th>
-                <th>Modificar</th>
-                <th>Eliminar</th>
+                <th>Fecha de matrícula</th>
+                <th>Acciones</th>
             </tr>
         </thead>
-        <tbody id="registros">
-            <!-- Los registros se mostrarán aquí -->
-        </tbody>
+        <tbody id="table-body"></tbody>
     </table>
+
+    <script type="module">
+        onValue(ref(database, 'registros'), (snapshot) => {
+            const data = snapshot.val();
+            const records = data ? Object.entries(data) : [];
+
+            const tableBody = document.getElementById("table-body");
+            tableBody.innerHTML = "";
+
+            records.forEach(([key, record]) => {
+                const row = document.createElement("tr");
+
+                const idCell = document.createElement("td");
+                idCell.textContent = record.id;
+                row.appendChild(idCell);
+
+                const apellidoCell = document.createElement("td");
+                apellidoCell.textContent = record.apellido;
+                row.appendChild(apellidoCell);
+
+                const cursoCell = document.createElement("td");
+                cursoCell.textContent = record.curso;
+                row.appendChild(cursoCell);
+
+                const fechaMatriculaCell = document.createElement("td");
+                fechaMatriculaCell.textContent = record.fechaMatricula;
+                row.appendChild(fechaMatriculaCell);
+
+                const actionsCell = document.createElement("td");
+                const modificarButton = document.createElement("button");
+                modificarButton.textContent = "Modificar";
+                modificarButton.onclick = () => {
+                    document.getElementById("id").value = record.id;
+                    document.getElementById("apellido").value = record.apellido;
+                    document.getElementById("curso").value = record.curso;
+                    document.getElementById("fechaMatricula").value = record.fechaMatricula;
+                };
+                actionsCell.appendChild(modificarButton);
+
+                const eliminarButton = document.createElement("button");
+                eliminarButton.textContent = "Eliminar";
+                eliminarButton.onclick = () => {
+                    remove(ref(database, 'registros/' + key));
+                };
+                actionsCell.appendChild(eliminarButton);
+
+                row.appendChild(actionsCell);
+
+                tableBody.appendChild(row);
+            });
+        });
+    </script>
 </body>
+
 </html>
