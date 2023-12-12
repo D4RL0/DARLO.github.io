@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Registro de Estudiantes</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Sistema de Registro de Estudiantes</h2>
+
+<!-- Formulario de Registro -->
+<form id="registroForm">
+    <label for="id">ID:</label>
+    <input type="text" id="id" required>
+    
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" required>
+    
+    <label for="apellido">Apellido:</label>
+    <input type="text" id="apellido" required>
+    
+    <label for="edad">Edad:</label>
+    <input type="number" id="edad" required>
+    
+    <label for="curso">Curso:</label>
+    <input type="text" id="curso" required>
+    
+    <label for="fechaMatricula">Fecha de Matriculación:</label>
+    <input type="date" id="fechaMatricula" required>
+    
+    <button type="button" onclick="agregarEstudiante()">Agregar Estudiante</button>
+</form>
+
+<!-- Buscar por ID -->
+<label for="buscarId">Buscar por ID:</label>
+<input type="text" id="buscarId">
+<button type="button" onclick="buscarEstudiante()">Buscar</button>
+
+<!-- Tabla de Estudiantes -->
+<table id="tablaEstudiantes">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Edad</th>
+            <th>Curso</th>
+            <th>Fecha de Matriculación</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Las filas de la tabla se llenarán dinámicamente con JavaScript -->
+    </tbody>
+</table>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import  { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyCdCWugXvKk8euGl8kmoqId18YfpeEHqw4",
+        authDomain: "proyecto-2-26d9e.firebaseapp.com",
+        databaseURL: "https://proyecto-2-26d9e-default-rtdb.firebaseio.com",
+        projectId: "proyecto-2-26d9e",
+        storageBucket: "proyecto-2-26d9e.appspot.com",
+        messagingSenderId: "862517468422",
+        appId: "1:862517468422:web:c6e6d6fca84867d3015287"
+    };
+
+    // Initialize Firebase
+    initializeApp(firebaseConfig);
+
+    let estudiantes = [];
+
+    function agregarEstudiante() {
+        // Obtener valores del formulario
+        let id = document.getElementById('id').value;
+        let nombre = document.getElementById('nombre').value;
+        let apellido = document.getElementById('apellido').value;
+        let edad = document.getElementById('edad').value;
+        let curso = document.getElementById('curso').value;
+        let fechaMatricula = document.getElementById('fechaMatricula').value;
+
+        // Obtener referencia a la base de datos
+        const db = getDatabase();
+
+        // Crear una referencia a la colección 'estudiantes'
+        const estudiantesRef = ref(db, 'estudiantes');
+
+        // Push a la base de datos
+        const nuevoEstudianteRef = push(estudiantesRef);
+        const nuevoEstudianteKey = nuevoEstudianteRef.key;
+
+        // Crear objeto estudiante
+        let estudiante = {
+            id: nuevoEstudianteKey,
+            nombre: nombre,
+            apellido: apellido,
+            edad: edad,
+            curso: curso,
+            fechaMatricula: fechaMatricula
+        };
+
+        // Actualizar datos en la base de datos
+        estudiantesRef.child(nuevoEstudianteKey).set(estudiante);
+
+        // Limpiar formulario
+        document.getElementById('registroForm').reset();
+
+        // Actualizar tabla
+        actualizarTabla();
+    }
+
+    function buscarEstudiante() {
+        // Obtener ID a buscar
+        let buscarId = document.getElementById('buscarId').value;
+
+        // Filtrar estudiantes por ID
+        let resultado = estudiantes.filter(estudiante => estudiante.id === buscarId);
+
+        // Mostrar resultados en la tabla
+        actualizarTabla(resultado);
+    }
+
+    function actualizarTabla(estudiantesMostrar = estudiantes) {
+        // Obtener referencia a la tabla
+        let tabla = document.getElementById('tablaEstudiantes').getElementsByTagName('tbody')[0];
+
+        // Limpiar contenido actual de la tabla
+        tabla.innerHTML = '';
+
+        // Obtener referencia a la base de datos
+        const db = getDatabase();
+
+        // Crear una referencia a la colección 'estudiantes'
+        const estudiantesRef = ref(db, 'estudiantes');
+
+        // Leer datos de la base de datos
+        onValue(estudiantesRef, (snapshot) => {
+            estudiantes = [];
+            snapshot.forEach((childSnapshot) => {
+                let estudiante = childSnapshot.val();
+                estudiante.id = childSnapshot.key;
+                estudiantes.push(estudiante);
+            });
+
+            // Iterar sobre estudiantes y agregar filas a la tabla
+            estudiantesMostrar.forEach(estudiante => {
+                let fila = tabla.insertRow();
+                fila.innerHTML = `<td>${estudiante.id}</td>
+                                  <td>${estudiante.nombre}</td>
+                                  <td>${estudiante.apellido}</td>
+                                  <td>${estudiante.edad}</td>
+                                  <td>${estudiante.curso}</td>
+                                  <td>${estudiante.fechaMatricula}</td>
+                                  <td><button onclick="modificarEstudiante('${estudiante.id}')">Modificar</button>
+                                      <button onclick="eliminarEstudiante('${estudiante.id}')">Eliminar</button></td>`;
+            });
+        });
+    }
+
+    function modificarEstudiante(id) {
+        // Implementar lógica para modificar un estudiante
+        // Puedes abrir un formulario de edición, etc.
+        console.log('Modificar estudiante con ID:', id);
+    }
+
+    function eliminarEstudiante(id) {
+        // Obtener referencia a la base de datos
+        const db = getDatabase();
+
+        // Crear una referencia a la colección 'estudiantes'
+        const estudiantesRef = ref(db, 'estudiantes');
+
+        // Eliminar estudiante de la base de datos
+        remove(ref(estudiantesRef, id));
+
+        // Actualizar tabla sin el estudiante eliminado
+        actualizarTabla();
+    }
+</script>
+
+</body>
+</html>

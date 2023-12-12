@@ -15,27 +15,4 @@
       messagingSenderId: "862517468422",
       appId: "1:862517468422:web:c6e6d6fca84867d3015287"
     };
-  
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-
-    window.CrearRegistro= function(){
-        const nombre= document.getElementById("nombre").value;
-        const edad = document.getElementById("edad").value;
-
-        push(
-            ref(database, 'septimo'),
-            {
-                name: nombre,
-                age: edad
-            }
-
-
-        );
-
-        console.log(nombre,edad);
-
-
-    }
   </script>
