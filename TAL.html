@@ -1,95 +1,164 @@
-<!-- ... (código anterior) ... -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Estudiantes</title>
+</head>
+<body>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"
 
-<script type="module">
-  // Referencia a la tabla HTML donde se mostrarán los estudiantes
-  const studentTable = document.getElementById('studentTable');
+        const firebaseConfig = {
+          apiKey: "AIzaSyCdCWugXvKk8euGl8kmoqId18YfpeEHqw4",
+          authDomain: "proyecto-2-26d9e.firebaseapp.com",
+          databaseURL: "https://proyecto-2-26d9e-default-rtdb.firebaseio.com",
+          projectId: "proyecto-2-26d9e",
+          storageBucket: "proyecto-2-26d9e.appspot.com",
+          messagingSenderId: "862517468422",
+          appId: "1:862517468422:web:c6e6d6fca84867d3015287"
+        };
 
-  // Función para buscar un estudiante por ID
-  function buscarPorId() {
-    const searchId = document.getElementById('searchId').value;
-    const database = getDatabase();
-    const studentsRef = ref(database, 'students');
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
 
-    // Escuchar cambios en la base de datos cuando se agrega un nuevo estudiante
-    onValue(studentsRef, (snapshot) => {
-      const students = snapshot.val();
+        // Función para crear un nuevo registro
+        window.CrearRegistro = function(){
+            const id = new Date().getTime(); // Generamos un ID único usando la marca de tiempo
+            const nombre = document.getElementById("nombre").value;
+            const apellido = document.getElementById("apellido").value;
+            const edad = document.getElementById("edad").value;
+            const curso = document.getElementById("curso").value;
+            const fechaMatriculacion = new Date().toISOString(); // Fecha actual en formato ISO
 
-      // Limpiar la tabla antes de mostrar los resultados
-      studentTable.innerHTML = '';
+            push(
+                ref(database, 'estudiantes'),
+                {
+                    id: id,
+                    nombre: nombre,
+                    apellido: apellido,
+                    edad: edad,
+                    curso: curso,
+                    fechaMatriculacion: fechaMatriculacion
+                }
+            );
 
-      // Verificar si el estudiante con el ID proporcionado existe
-      if (students) {
-        const student = students[searchId];
-
-        if (student) {
-          // Mostrar la información del estudiante en el formulario
-          document.getElementById('id').value = student.id;
-          document.getElementById('nombre').value = student.nombre;
-          document.getElementById('apellido').value = student.apellido;
-          document.getElementById('edad').value = student.edad;
-          document.getElementById('curso').value = student.curso;
-          document.getElementById('fecha').value = student.fecha;
-
-          // Crear fila en la tabla con los detalles del estudiante
-          const row = studentTable.insertRow();
-          row.innerHTML = `<td>${student.id}</td>
-                           <td>${student.nombre}</td>
-                           <td>${student.apellido}</td>
-                           <td>${student.edad}</td>
-                           <td>${student.curso}</td>
-                           <td>${student.fecha}</td>
-                           <td>
-                             <button type="button" onclick="modificarEstudiante('${searchId}')">Modificar</button>
-                             <button type="button" onclick="eliminarEstudiante('${searchId}')">Eliminar</button>
-                           </td>`;
-        } else {
-          alert('Estudiante no encontrado');
+            // Limpiar los campos después de crear el registro
+            document.getElementById("nombre").value = "";
+            document.getElementById("apellido").value = "";
+            document.getElementById("edad").value = "";
+            document.getElementById("curso").value = "";
         }
-      }
-    });
-  }
 
-  // Función para modificar un estudiante
-  function modificarEstudiante(studentId) {
-    // Obtener referencias a los campos del formulario
-    const id = document.getElementById('id').value;
-    const nombre = document.getElementById('nombre').value;
-    const apellido = document.getElementById('apellido').value;
-    const edad = document.getElementById('edad').value;
-    const curso = document.getElementById('curso').value;
-    const fecha = document.getElementById('fecha').value;
+        // Función para mostrar todos los registros
+        function mostrarRegistros() {
+            const registrosDiv = document.getElementById("registros");
+            registrosDiv.innerHTML = ""; // Limpiar contenido existente
 
-    // Obtener referencia a la base de datos de Firebase
-    const database = getDatabase();
-    const studentsRef = ref(database, 'students');
+            onValue(ref(database, 'estudiantes'), (snapshot) => {
+                const estudiantes = snapshot.val();
+                for (const key in estudiantes) {
+                    const estudiante = estudiantes[key];
+                    const row = `<tr>
+                        <td>${estudiante.id}</td>
+                        <td>${estudiante.nombre}</td>
+                        <td>${estudiante.apellido}</td>
+                        <td>${estudiante.edad}</td>
+                        <td>${estudiante.curso}</td>
+                        <td>${estudiante.fechaMatriculacion}</td>
+                        <td><button onclick="modificarRegistro(${estudiante.id})">Modificar</button></td>
+                        <td><button onclick="eliminarRegistro(${estudiante.id})">Eliminar</button></td>
+                    </tr>`;
+                    registrosDiv.innerHTML += row;
+                }
+            });
+        }
 
-    // Actualizar la información del estudiante en la base de datos
-    set(ref(studentsRef, studentId), {
-      id,
-      nombre,
-      apellido,
-      edad,
-      curso,
-      fecha
-    });
+        // Función para modificar un registro
+        window.modificarRegistro = function(id) {
+            // Implementa la lógica para modificar un registro según el ID
+            // Puedes utilizar un formulario o una ventana modal para la edición
+            // ...
 
-    // Limpiar el formulario después de modificar
-    document.getElementById('studentForm').reset();
-    // Limpiar la tabla después de modificar
-    studentTable.innerHTML = '';
-  }
+            // Ejemplo de cómo actualizar un campo específico (puedes ajustar según tus necesidades)
+            update(ref(database, `estudiantes/${id}`), {
+                nombre: "NuevoNombre",
+                edad: 25
+            });
+        }
 
-  // Función para eliminar un estudiante
-  function eliminarEstudiante(studentId) {
-    const database = getDatabase();
-    const studentsRef = ref(database, 'students');
+        // Función para eliminar un registro
+        window.eliminarRegistro = function(id) {
+            remove(ref(database, `estudiantes/${id}`));
+        }
 
-    // Eliminar el estudiante de la base de datos
-    remove(ref(studentsRef, studentId));
+        // Función para buscar por ID
+        window.buscarPorId = function() {
+            const idBusqueda = document.getElementById("idBusqueda").value;
 
-    // Limpiar el formulario después de eliminar
-    document.getElementById('studentForm').reset();
-    // Limpiar la tabla después de eliminar
-    studentTable.innerHTML = '';
-  }
-</script>
+            onValue(ref(database, `estudiantes/${idBusqueda}`), (snapshot) => {
+                const estudiante = snapshot.val();
+                if (estudiante) {
+                    const registrosDiv = document.getElementById("registros");
+                    registrosDiv.innerHTML = ""; // Limpiar contenido existente
+
+                    const row = `<tr>
+                        <td>${estudiante.id}</td>
+                        <td>${estudiante.nombre}</td>
+                        <td>${estudiante.apellido}</td>
+                        <td>${estudiante.edad}</td>
+                        <td>${estudiante.curso}</td>
+                        <td>${estudiante.fechaMatriculacion}</td>
+                        <td><button onclick="modificarRegistro(${estudiante.id})">Modificar</button></td>
+                        <td><button onclick="eliminarRegistro(${estudiante.id})">Eliminar</button></td>
+                    </tr>`;
+                    registrosDiv.innerHTML += row;
+                } else {
+                    alert("No se encontró ningún registro con ese ID.");
+                }
+            });
+        }
+
+        // Mostrar los registros al cargar la página
+        mostrarRegistros();
+    </script>
+
+    <h1>Registro de Estudiantes</h1>
+    <form id="crud-form">
+        <label for="nombre">Nombre: </label>
+        <input type="text" name="" id="nombre">
+        <label for="apellido">Apellido: </label>
+        <input type="text" name="" id="apellido">
+        <label for="edad">Edad: </label>
+        <input type="text" name="" id="edad">
+        <label for="curso">Curso: </label>
+        <input type="text" name="" id="curso">
+        <button type="button" onclick="CrearRegistro()">Crear</button>
+    </form>
+
+    <h2>Buscar por ID</h2>
+    <label for="idBusqueda">ID: </label>
+    <input type="text" id="idBusqueda">
+    <button type="button" onclick="buscarPorId()">Buscar</button>
+
+    <h2>Registros</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Edad</th>
+                <th>Curso</th>
+                <th>Fecha de Matriculación</th>
+                <th>Modificar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody id="registros">
+            <!-- Los registros se mostrarán aquí -->
+        </tbody>
+    </table>
+</body>
+</html>
