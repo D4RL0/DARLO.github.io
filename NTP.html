@@ -84,9 +84,9 @@
         }
 
         function actualizarTabla() {
-            const id = document.getElementById("id").value;
+            
             const tabla = document.getElementById("tablaRegistros");
-            /* const id = document.getElementById("id").value; */
+            const id = document.getElementById("id").value; 
             const nombre = document.getElementById("nombre").value;
             const curso = document.getElementById("curso").value;
             const edad = document.getElementById("edad").value;
@@ -138,6 +138,7 @@
             <th>Curso</th>
             <th>Edad</th>
             <th>Fecha de Matricula</th>
+            <th>Opciones</th>
         </tr>
         <!-- Las filas de la tabla se añadirán dinámicamente -->
     </table>
